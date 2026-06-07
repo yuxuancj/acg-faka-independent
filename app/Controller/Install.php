@@ -30,6 +30,14 @@ class Install extends User
         return $this->json(200, "success");
     }
 
+    /**
+     * 安装入口 - 重定向到 step
+     * @return void
+     */
+    public function index(): void
+    {
+        Client::redirect("/install/step");
+    }
 
     /**
      * @return string
