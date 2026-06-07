@@ -1,59 +1,48 @@
 <?php
-declare(strict_types=1);
-
+/**
+ * 优惠券模型
+ */
 namespace App\Model;
 
-
-use Illuminate\Database\Eloquent\Model;
-
-/**
- * @property string $code
- * @property int $commodity_id
- * @property string $create_time
- * @property string $expire_time
- * @property int $id
- * @property float $money
- * @property string $trade_no
- * @property int $owner
- * @property string $service_time
- * @property string $note
- * @property int $status
- * @property int $life
- * @property int $use_life
- * @property int $mode
- * @property int $category_id
- * @property string $race
- * @property array $sku
- */
 class Coupon extends Model
 {
+    protected $table = 'coupon';
+    
+    const TYPE_FIXED = 1;
+    const TYPE_DISCOUNT = 2;
+    const TYPE_FREE = 3;
+    
     /**
-     * @var string
+     * 关联用户优惠券
      */
-    protected $table = "coupon";
-
-    /**
-     * @var bool
-     */
-    public $timestamps = false;
-
-    /**
-     * @var array
-     */
-    protected $casts = ['commodity_id' => 'integer', 'id' => 'integer', 'category_id' => 'integer', 'mode' => 'integer', 'money' => 'float', 'owner' => 'integer', 'status' => 'integer', 'life' => 'integer', 'use_life' => 'integer', 'sku' => 'json'];
-
-    public function owner(): ?\Illuminate\Database\Eloquent\Relations\HasOne
+    public function userCoupons()
     {
-        return $this->hasOne(User::class, "id", "owner");
+        return $this->hasMany(UserCoupon::class);
     }
-
-    public function commodity(): ?\Illuminate\Database\Eloquent\Relations\HasOne
+    
+    /**
+     * 获取可用优惠券
+     */
+    public static function getAvailableCoupons()
     {
-        return $this->hasOne(Commodity::class, "id", "commodity_id");
-    }
-
-    public function category(): ?\Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(Category::class, "id", "category_id");
+        $now = date('Y-m-d H:i:s');
+        $query = self::where('status', 1)
+            ->whereRaw('(total_num = 0 OR used_num < total_num)');
+        
+        if (self::where('start_time', 'IS NOT NULL')->exists()) {
+            $query->where(function($q) use ($now) {
+                $q->where('start_time', '<=', $now)
+                  ->orWhere('start_time', null);
+            });
+        }
+        
+        if (self::where('end_time', 'IS NOT NULL')->exists()) {
+            $query->where(function($q) use ($now) {
+                $q->where('end_time', '>=', $now)
+                  ->orWhere('end_time', null);
+            });
+        }
+        
+        return $query->orderBy('sort', 'asc')->get();
     }
 }
