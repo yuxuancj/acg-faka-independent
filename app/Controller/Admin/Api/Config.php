@@ -211,31 +211,5 @@ class Config extends Manage
         return $this->json(data: $data);
     }
 
-    /**
-     * @return array
-     * @throws JSONException
-     */
-    public function extra(): array
-    {
-        $map = $this->request->post(flags: Filter::NORMAL);
-        $keys = ["balance_pay", "vip_system", "points_system", "daily_checkin", "package_system", "fancy_card", "card_verify_strategy", "wholesale_discount", "webhook", "ip_blacklist", "ticket_system"];
-        $inits = ["balance_pay", "vip_system", "points_system", "daily_checkin", "package_system", "fancy_card", "card_verify_strategy", "wholesale_discount", "webhook", "ip_blacklist", "ticket_system"];
 
-        try {
-            $config = [];
-            foreach ($keys as $key) {
-                if (in_array($key, $inits)) {
-                    $config[$key] = isset($map[$key]) ? (int)$map[$key] : 0;
-                } else {
-                    $config[$key] = $map[$key] ?? '';
-                }
-            }
-            CFG::put("extra_config", json_encode($config));
-        } catch (\Exception $e) {
-            throw new JSONException("保存失败，请检查原因");
-        }
-
-        ManageLog::log($this->getManage(), "修改了二开功能设置");
-        return $this->json(200, '保存成功');
-    }
 }

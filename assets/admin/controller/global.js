@@ -216,9 +216,10 @@
         });
     }
 
-    _LoadStoreUserInfo();
-    _LodLatest();
-    _LoadPluginUpdates();
-    _AppServerSelect();
+    // 云端功能已移除
+    // _LoadStoreUserInfo();
+    // _LodLatest();
+    // _LoadPluginUpdates();
+    // _AppServerSelect();
     _Pjax();
 }();

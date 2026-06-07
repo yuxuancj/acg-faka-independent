@@ -190,7 +190,8 @@
         });
     }
 
-    loadAd();
+    // 云端公告已移除
+    // loadAd();
     loadDashboardData(0);
     loadWeekStatistics();
 
