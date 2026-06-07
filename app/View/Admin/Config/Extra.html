@@ -1,0 +1,202 @@
+#{include file="../Header.html"}
+#{set_script_var([
+"_config" => $config
+])}
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    #{include file="../Toolbar.html"}
+    <!--end::Toolbar-->
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!--begin::Basic info-->
+            <div class="card mb-5 mb-xl-10">
+                <!--begin::Card header-->
+                <div class="card-header border-0 cursor-pointer">
+                    <!--begin::Card title-->
+                    <div class="card-title m-0">
+                        <h3 class="fw-bolder m-0">二开功能设置 (V3.0)</h3>
+                    </div>
+                    <!--end::Card title-->
+                </div>
+                <!--begin::Card header-->
+                <!--begin::Content-->
+                <div id="kt_account_profile_details" class="collapse show">
+                    <!--begin::Form-->
+                    <form id="data-form" class="form">
+                        <!--begin::Card body-->
+                        <div class="card-body  p-9">
+                            <div class="card bg-light-primary rounded mb-10">
+                                <div class="card-body">
+                                    <h4 class="card-title">🎯 用户与支付功能</h4>
+                                </div>
+                            </div>
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">余额支付系统</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="balance_pay" value="1" #{if $config.balance_pay== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">VIP会员系统</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="vip_system" value="1" #{if $config.vip_system== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">积分系统</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="points_system" value="1" #{if $config.points_system== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">每日签到</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="daily_checkin" value="1" #{if $config.daily_checkin== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <div class="card bg-light-success rounded mb-10 mt-10">
+                                <div class="card-body">
+                                    <h4 class="card-title">🛒 商品与卡密功能</h4>
+                                </div>
+                            </div>
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">商品套餐</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="package_system" value="1" #{if $config.package_system== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">靓号加价</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="fancy_card" value="1" #{if $config.fancy_card== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">卡密核销策略</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="card_verify_strategy" value="1" #{if $config.card_verify_strategy== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">批发优惠</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="wholesale_discount" value="1" #{if $config.wholesale_discount== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <div class="card bg-light-warning rounded mb-10 mt-10">
+                                <div class="card-body">
+                                    <h4 class="card-title">📊 运维与扩展功能</h4>
+                                </div>
+                            </div>
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">Webhook事件</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="webhook" value="1" #{if $config.webhook== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">IP黑名单</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="ip_blacklist" value="1" #{if $config.ip_blacklist== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">工单系统</label>
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox" name="ticket_system" value="1" #{if $config.ticket_system== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                        </div>
+                        <!--end::Card body-->
+                        <!--begin::Actions-->
+                        <div class="card-footer d-flex justify-content-center py-6 px-9">
+                            <button type="button" class="btn btn-primary save-data">保存设置 (Save Config)</button>
+                        </div>
+                        <!--end::Actions-->
+                    </form>
+                    <!--end::Form-->
+                </div>
+                <!--end::Content-->
+            </div>
+            <!--end::Basic info-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+
+#{ready("/assets/admin/controller/config/extra.js")}
+#{include file="../Footer.html"}

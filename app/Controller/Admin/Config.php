@@ -21,6 +21,7 @@ class Config extends Manage
         ["name" => "👹 短信设置", "url" => "/admin/config/sms"],
         ["name" => "👺 邮箱设置", "url" => "/admin/config/email"],
         ["name" => "🛡️ 其他设置", "url" => "/admin/config/other"],
+        ["name" => "🚀 二开功能", "url" => "/admin/config/extra"],
     ];
 
     /**
@@ -113,5 +114,15 @@ class Config extends Manage
     {
         $category = \App\Model\Category::query()->where("status", 1)->where("owner", 0)->get();
         return $this->render("其他设置", "Config/Other.html", ["toolbar" => $this->TOOLBAR, "category" => $category->toArray()]);
+    }
+
+    /**
+     * @return string
+     * @throws ViewException
+     */
+    public function extra(): string
+    {
+        $extraConfig = json_decode(\App\Model\Config::get("extra_config", "{}"), true);
+        return $this->render("二开功能设置", "Config/Extra.html", ["toolbar" => $this->TOOLBAR, "config" => $extraConfig]);
     }
 }

@@ -97,7 +97,7 @@ class Install extends User
             throw new JSONException("您设置的登录密码过于简单");
         }
 
-        $sqlFile = BASE_PATH . '/kernel/Install/Install.sql';
+        $sqlFile = BASE_PATH . '/kernel/Install/Full_Install.sql';
 
         $salt = Str::generateRandStr(32);
         $pw = Str::generatePassword($login_password, $salt);

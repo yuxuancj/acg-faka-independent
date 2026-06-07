@@ -140,6 +140,34 @@
                         </div>
 
                         <div class="menu-item">
+                            <a class="menu-link  #{if $title == 'VIP会员'}active#{/if}" href="/admin/vip/index">
+                                <span class="menu-icon"><i class="fa-duotone fa-regular fa-crown"></i></span>
+                                <span class="menu-title">VIP会员</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link  #{if $title == '积分抽奖'}active#{/if}" href="/admin/lottery/index">
+                                <span class="menu-icon"><i class="fa-duotone fa-regular fa-gift"></i></span>
+                                <span class="menu-title">积分抽奖</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link  #{if $title == '用户余额'}active#{/if}" href="/admin/balance/index">
+                                <span class="menu-icon"><i class="fa-duotone fa-regular fa-wallet"></i></span>
+                                <span class="menu-title">用户余额</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link  #{if $title == '工单管理'}active#{/if}" href="/admin/ticket/index">
+                                <span class="menu-icon"><i class="fa-duotone fa-regular fa-ticket"></i></span>
+                                <span class="menu-title">工单管理</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
                             <a class="menu-link  #{if $title == '提现管理'}active#{/if}" href="/admin/cash/index">
                                 <span class="menu-icon"><i
                                             class="fa-duotone fa-regular fa-money-bill-transfer"></i></span>
