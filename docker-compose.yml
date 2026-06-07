@@ -1,67 +1,78 @@
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: acg-faka-app
-    restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    ports:
-      - "${ACG_HTTP_PORT:-8080}:80"
-    volumes:
-      - acg_config:/var/www/html/config
-      - acg_install:/var/www/html/kernel/Install
-      - acg_runtime:/var/www/html/runtime
-      - acg_assets_cache:/var/www/html/assets/cache
-      - acg_plugins:/var/www/html/app/Plugin
-      - acg_pay:/var/www/html/app/Pay
-      - acg_themes:/var/www/html/app/View/User/Theme
+version: '3.8'
 
+services:
+  # MySQL数据库
   mysql:
     image: mysql:8.0
     container_name: acg-faka-mysql
-    restart: unless-stopped
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-acg_faka}
-      MYSQL_USER: ${MYSQL_USER:-acg}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-acg_password}
-      TZ: Asia/Shanghai
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --default-authentication-plugin=mysql_native_password
+      MYSQL_ROOT_PASSWORD: acg_faka_2024
+      MYSQL_DATABASE: acg_faka
+      MYSQL_USER: acgfaka
+      MYSQL_PASSWORD: acgfaka123
+    ports:
+      - "3306:3306"
     volumes:
-      - acg_mysql:/var/lib/mysql
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent",
-        ]
-      interval: 5s
-      timeout: 3s
-      retries: 30
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - acg-network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
 
+  # PHP应用服务
+  php:
+    image: php:8.1-fpm
+    container_name: acg-faka-php
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - acg-network
+    depends_on:
+      - mysql
+    command: >
+      bash -c "docker-php-ext-install pdo pdo_mysql mysqli gd zip opcache &&
+               apt-get update && apt-get install -y libzip-dev libpng-dev libjpeg-dev libfreetype6-dev && 
+               docker-php-ext-configure gd --with-freetype --with-jpeg &&
+               docker-php-ext-install gd &&
+               docker-php-ext-enable pdo pdo_mysql mysqli &&
+               php-fpm"
+
+  # Nginx Web服务器
+  nginx:
+    image: nginx:alpine
+    container_name: acg-faka-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/logs:/var/log/nginx
+    networks:
+      - acg-network
+    depends_on:
+      - php
+      - mysql
+
+  # Redis缓存（可选）
   redis:
     image: redis:7-alpine
     container_name: acg-faka-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - acg_redis:/data
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - acg-network
 
 volumes:
-  acg_config:
-  acg_install:
-  acg_runtime:
-  acg_assets_cache:
-  acg_plugins:
-  acg_pay:
-  acg_themes:
-  acg_mysql:
-  acg_redis:
+  mysql_data:
+
+networks:
+  acg-network:
+    driver: bridge
