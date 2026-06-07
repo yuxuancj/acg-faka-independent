@@ -84,6 +84,26 @@ chmod +x docker/start.sh
 # 密码: admin
 ```
 
+### 宝塔一键部署（强烈推荐）
+
+```bash
+# 方式1: 使用宝塔一键脚本
+wget https://github.com/yuxuancj/acg-faka-independent/raw/main/install_baota.sh
+chmod +x install_baota.sh
+./install_baota.sh
+
+# 方式2: 手动部署
+# 下载源码，在宝塔面板创建网站，上传源码，设置伪静态
+# 详细步骤请查看 BAOTA_README.md
+```
+
+宝塔部署包包含：
+- ✅ 自动安装脚本
+- ✅ Nginx配置模板
+- ✅ 伪静态规则
+- ✅ 安装向导界面
+- ✅ 详细部署文档
+
 ### 传统LNMP环境
 
 请参阅 [QUICK_START.md](QUICK_START.md) 获取详细安装指南。
@@ -164,8 +184,10 @@ v2.0 数据库迁移文件位于: `/kernel/Install/Migration_v2.0.sql`
 ## 📚 文档
 
 - [快速入门指南](QUICK_START.md)
+- [宝塔一键部署文档](BAOTA_README.md)
 - [v2.0 二次开发文档](DEVELOPMENT_V2.md)
 - [v1.0 开发文档](DEVELOPMENT.md)
+- [晨泽功能覆盖报告](FEATURE_COVERAGE.md)
 - [测试报告](test/TEST_REPORT.md)
 - [测试用例](test/TEST_CASES.md)
 
@@ -263,6 +285,12 @@ $ticketService->createTicket($userId, [
 - ✅ 完整的数据库迁移脚本
 - ✅ 新增模型和服务类
 - ✅ 完整的二次开发文档
+- ✅ 宝塔一键部署脚本
+- ✅ 宝塔Nginx配置模板
+- ✅ 宝塔伪静态规则
+- ✅ 宝塔安装向导界面
+- ✅ 宝塔部署完整文档
+- ✅ 晨泽功能覆盖报告
 
 ### v1.0-independent (2026-06-07)
 

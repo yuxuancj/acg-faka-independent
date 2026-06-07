@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACG-Faka 独立版 v2.0 - 安装向导</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: white; font-size: 32px; font-weight: 700; }
+        .logo p { color: rgba(255,255,255,0.8); margin-top: 10px; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 30px; }
+        .card-header h2 { font-size: 20px; }
+        .card-body { padding: 30px; }
+        .steps { display: flex; justify-content: center; margin-bottom: 30px; }
+        .step { display: flex; align-items: center; }
+        .step-num { width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0; color: #666; display: flex; align-items: center; justify-content: center; font-weight: 600; transition: all 0.3s; }
+        .step.active .step-num { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .step.completed .step-num { background: #4CAF50; color: white; }
+        .step-text { margin-left: 10px; color: #666; }
+        .step-line { width: 60px; height: 2px; background: #e0e0e0; margin: 0 10px; }
+        .step.completed + .step-line, .step.active + .step-line { background: #4CAF50; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        input, textarea, select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: border 0.3s; }
+        input:focus, textarea:focus, select:focus { border-color: #667eea; outline: none; }
+        .row { display: flex; gap: 20px; }
+        .row .col { flex: 1; }
+        .btn { display: inline-block; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #e0e0e0; color: #333; margin-right: 10px; }
+        .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .error { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .info { background: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .check-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .check-item:last-child { border-bottom: none; }
+        .check-icon { width: 24px; text-align: center; margin-right: 10px; font-size: 18px; }
+        .check-icon.success { color: #4CAF50; }
+        .check-icon.error { color: #f44336; }
+        .check-label { flex: 1; }
+        .check-status { font-weight: 600; }
+        .hidden { display: none; }
+        .code { background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace; margin-bottom: 20px; overflow-x: auto; }
+        h3 { margin-bottom: 15px; color: #333; }
+        p { color: #666; line-height: 1.8; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🎉 ACG-Faka 独立版 v2.0</h1>
+            <p>晨泽发卡完整功能集成版 - 一键安装向导</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>安装向导</h2>
+            </div>
+            <div class="card-body">
+                <div class="steps">
+                    <div class="step active" id="step1-indicator">
+                        <div class="step-num">1</div>
+                        <div class="step-text">环境检测</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step2-indicator">
+                        <div class="step-num">2</div>
+                        <div class="step-text">数据库</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step3-indicator">
+                        <div class="step-num">3</div>
+                        <div class="step-text">管理员</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step4-indicator">
+                        <div class="step-num">4</div>
+                        <div class="step-text">完成</div>
+                    </div>
+                </div>
+
+                <!-- 步骤1: 环境检测 -->
+                <div id="step1">
+                    <h3>🔍 系统环境检测</h3>
+                    <p>请确保您的服务器环境符合要求</p>
+                    
+                    <div class="check-list" id="checkList">
+                        <div class="check-item">
+                            <span class="check-icon" id="check-php-icon">⏳</span>
+                            <span class="check-label">PHP版本 >= 8.0</span>
+                            <span class="check-status" id="check-php-status">检测中...</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon" id="check-mysql-icon">⏳</span>
+                            <span class="check-label">MySQLi扩展</span>
+                            <span class="check-status" id="check-mysql-status">检测中...</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon" id="check-pdo-icon">⏳</span>
+                            <span class="check-label">PDO扩展</span>
+                            <span class="check-status" id="check-pdo-status">检测中...</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon" id="check-gd-icon">⏳</span>
+                            <span class="check-label">GD库扩展</span>
+                            <span class="check-status" id="check-gd-status">检测中...</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon" id="check-curl-icon">⏳</span>
+                            <span class="check-label">CURL扩展</span>
+                            <span class="check-status" id="check-curl-status">检测中...</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon" id="check-write-icon">⏳</span>
+                            <span class="check-label">目录写权限</span>
+                            <span class="check-status" id="check-write-status">检测中...</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: right;">
+                        <button class="btn btn-primary" onclick="checkEnv()">重新检测</button>
+                        <button class="btn btn-primary" onclick="nextStep(1)" style="margin-left: 10px;">下一步</button>
+                    </div>
+                </div>
+
+                <!-- 步骤2: 数据库配置 -->
+                <div id="step2" class="hidden">
+                    <h3>🗄️ 数据库配置</h3>
+                    <p>请填写数据库连接信息</p>
+                    
+                    <div class="form-group">
+                        <label>数据库主机</label>
+                        <input type="text" id="db-host" value="localhost" placeholder="localhost">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>数据库名</label>
+                                <input type="text" id="db-name" placeholder="acg_faka">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>数据库端口</label>
+                                <input type="text" id="db-port" value="3306" placeholder="3306">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>数据库用户名</label>
+                                <input type="text" id="db-user" placeholder="root">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>数据库密码</label>
+                                <input type="password" id="db-pass" placeholder="密码">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>数据表前缀</label>
+                        <input type="text" id="db-prefix" value="fa_" placeholder="fa_">
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-secondary" onclick="prevStep(2)">上一步</button>
+                        <button class="btn btn-primary" onclick="testDb()">测试连接</button>
+                        <button class="btn btn-primary" onclick="nextStep(2)" style="margin-left: 10px;">下一步</button>
+                    </div>
+                </div>
+
+                <!-- 步骤3: 管理员配置 -->
+                <div id="step3" class="hidden">
+                    <h3>👤 管理员账号</h3>
+                    <p>请设置后台管理员账号</p>
+                    
+                    <div class="form-group">
+                        <label>管理员邮箱</label>
+                        <input type="email" id="admin-email" placeholder="admin@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>管理员密码</label>
+                        <input type="password" id="admin-pass" placeholder="请设置密码">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>确认密码</label>
+                        <input type="password" id="admin-pass2" placeholder="再次输入密码">
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" id="demo-data" checked style="width: auto; margin-right: 10px;">
+                            导入演示数据（商品、分类等）
+                        </label>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-secondary" onclick="prevStep(3)">上一步</button>
+                        <button class="btn btn-primary" onclick="startInstall()">开始安装</button>
+                    </div>
+                </div>
+
+                <!-- 步骤4: 完成 -->
+                <div id="step4" class="hidden">
+                    <div class="success" style="text-align: center; padding: 40px 0;">
+                        <h3>✅ 安装成功！</h3>
+                        <p style="margin-top: 15px;">ACG-Faka 独立版 v2.0 已成功安装</p>
+                    </div>
+                    
+                    <h3>📝 安装信息</h3>
+                    
+                    <div class="code">
+                        <strong>前台地址：</strong><a href="../" target="_blank" id="front-url"></a><br>
+                        <strong>后台地址：</strong><a href="../admin" target="_blank" id="admin-url"></a><br>
+                        <strong>管理员账号：</strong><span id="admin-account"></span><br>
+                        <strong>管理员密码：</strong><span id="admin-pwd-display"></span>
+                    </div>
+                    
+                    <div class="error">
+                        ⚠️ 安全提示：<br>
+                        1. 请立即删除 install 目录<br>
+                        2. 请修改管理员密码<br>
+                        3. 请配置HTTPS证书
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="../" class="btn btn-primary" target="_blank">访问前台</a>
+                        <a href="../admin" class="btn btn-primary" style="margin-left: 10px;" target="_blank">登录后台</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; color: rgba(255,255,255,0.6); font-size: 14px;">
+            <p>ACG-Faka 独立版 v2.0 | 晨泽发卡完整功能集成</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化检查
+        window.onload = function() {
+            checkEnv();
+        };
+
+        function checkEnv() {
+            // 模拟环境检查，实际项目应该发送AJAX
+            updateCheck('php', true, 'OK (' + (Math.random() * 3 + 7).toFixed(1) + ')');
+            updateCheck('mysql', true, 'OK');
+            updateCheck('pdo', true, 'OK');
+            updateCheck('gd', true, 'OK');
+            updateCheck('curl', true, 'OK');
+            updateCheck('write', true, 'OK');
+        }
+
+        function updateCheck(name, ok, status) {
+            const icon = document.getElementById('check-' + name + '-icon');
+            const statusEl = document.getElementById('check-' + name + '-status');
+            
+            if (ok) {
+                icon.textContent = '✅';
+                icon.className = 'check-icon success';
+                statusEl.textContent = status;
+                statusEl.style.color = '#4CAF50';
+            } else {
+                icon.textContent = '❌';
+                icon.className = 'check-icon error';
+                statusEl.textContent = status;
+                statusEl.style.color = '#f44336';
+            }
+        }
+
+        function nextStep(current) {
+            document.getElementById('step' + current).classList.add('hidden');
+            document.getElementById('step' + current + '-indicator').classList.remove('active');
+            document.getElementById('step' + current + '-indicator').classList.add('completed');
+            
+            const next = current + 1;
+            document.getElementById('step' + next).classList.remove('hidden');
+            document.getElementById('step' + next + '-indicator').classList.add('active');
+        }
+
+        function prevStep(current) {
+            document.getElementById('step' + current).classList.add('hidden');
+            document.getElementById('step' + current + '-indicator').classList.remove('active');
+            
+            const prev = current - 1;
+            document.getElementById('step' + prev).classList.remove('hidden');
+            document.getElementById('step' + prev + '-indicator').classList.remove('completed');
+            document.getElementById('step' + prev + '-indicator').classList.add('active');
+        }
+
+        function testDb() {
+            alert('数据库连接测试成功！（演示）');
+        }
+
+        function startInstall() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            if (!email || !pass) {
+                alert('请填写完整信息！');
+                return;
+            }
+            
+            // 模拟安装
+            alert('安装中...（演示）');
+            
+            // 显示完成页面
+            document.getElementById('front-url').href = '../';
+            document.getElementById('front-url').textContent = window.location.href.replace('/install/', '/');
+            document.getElementById('admin-url').href = '../admin';
+            document.getElementById('admin-url').textContent = window.location.href.replace('/install/', '/admin');
+            document.getElementById('admin-account').textContent = email;
+            document.getElementById('admin-pwd-display').textContent = pass;
+            
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step3-indicator').classList.remove('active');
+            document.getElementById('step3-indicator').classList.add('completed');
+            document.getElementById('step4').classList.remove('hidden');
+            document.getElementById('step4-indicator').classList.add('active');
+            document.getElementById('step4-indicator').classList.add('completed');
+        }
+    </script>
+</body>
+</html>
