@@ -18,9 +18,6 @@ use Kernel\Util\View;
 class Install extends User
 {
 
-    #[Inject]
-    private App $app;
-
     /**
      * 伪静态探测
      * @return array
@@ -77,7 +74,9 @@ class Install extends User
 
 
         $data['install'] = true;
-        if ($data['php_version'] < 8) {
+        // 正确比较PHP版本
+        $phpVersion = explode('.', $data['php_version']);
+        if ((int)$phpVersion[0] < 8) {
             $data['install'] = false;
         } else {
             foreach ($data['ext'] as $ext) {
@@ -137,28 +136,121 @@ class Install extends User
 
         //导入数据库
         SQL::import($sqlFile . ".tmp", $host, $map['database'], $map['username'], $map['password'], $map['prefix']);
-        //设置数据库账号密码
-        setConfig([
-            'driver' => 'mysql',
-            'host' => $host,
-            'database' => $map['database'],
-            'username' => $map['username'],
-            'password' => $map['password'],
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => $map['prefix']
-        ], BASE_PATH . "/config/database.php");
 
-        Opcache::invalidate(BASE_PATH . "/config/database.php");
+        //更新配置文件
+        $configFile = BASE_PATH . '/config/database.php';
+        $configContent = (string)file_get_contents($configFile);
 
+        $configContent = str_replace("localhost", $host, $configContent);
+        $configContent = str_replace("acgshop", $map['database'], $configContent);
+        $configContent = str_replace("root", $map['username'], $configContent);
+        $configContent = str_replace("password", $map['password'], $configContent);
+        $configContent = str_replace("acg_", $map['prefix'], $configContent);
+
+        file_put_contents($configFile, $configContent);
+
+        //创建安装锁文件
+        file_put_contents(BASE_PATH . '/kernel/Install/Lock', date("Y-m-d H:i:s"));
+
+        //删除临时文件
         unlink($sqlFile . ".tmp");
-        file_put_contents(BASE_PATH . '/kernel/Install/Lock', "");
 
-        try {
-            $this->app->install();
-        } catch (\Exception|\Error $e) {
+        //更新配置文件
+        $appConfigFile = BASE_PATH . '/config/app.php';
+        $appConfigContent = (string)file_get_contents($appConfigFile);
+        $appConfigContent = str_replace("__APP_KEY__", Str::generateRandStr(32), $appConfigContent);
+        file_put_contents($appConfigFile, $appConfigContent);
+
+        //记录日志
+        ManageLog::log($email, "系统安装完成");
+
+        return $this->json(200, '安装成功');
+    }
+
+    /**
+     * 更新
+     * @return string
+     * @throws ViewException
+     */
+    public function update(): string
+    {
+        if (!file_exists(BASE_PATH . '/kernel/Install/Lock')) {
+            Client::redirect("/install/step", "请先安装", 3);
         }
 
-        return $this->json(200, '安装完成');
+        $data = [];
+        $data['version'] = config("app")['version'];
+        $data['currentVersion'] = $data['version'];
+
+        $data['versions'] = [];
+
+        $versionList = App::getVersions();
+        foreach ($versionList as $version) {
+            if (version_compare($version['version'], $data['version']) > 0) {
+                $data['versions'][] = $version;
+            }
+        }
+
+        return $this->render("更新", "Install/Update.html", $data);
+    }
+
+
+    /**
+     * 更新提交
+     * @return array
+     * @throws JSONException
+     */
+    public function updateSubmit(): array
+    {
+        $version = (string)$_POST['version'];
+
+        $versionInfo = App::getVersionInfo($version);
+
+        if (empty($versionInfo)) {
+            throw new JSONException("版本信息不存在");
+        }
+
+        $downloadUrl = $versionInfo['download'];
+        $tmpFile = BASE_PATH . '/runtime/update.zip';
+
+        //下载更新包
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $downloadUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        $content = curl_exec($ch);
+        curl_close($ch);
+
+        if ($content === false) {
+            throw new JSONException("下载更新包失败");
+        }
+
+        file_put_contents($tmpFile, $content);
+
+        //解压更新包
+        $zip = new \ZipArchive();
+        if ($zip->open($tmpFile) !== true) {
+            throw new JSONException("解压更新包失败");
+        }
+        $zip->extractTo(BASE_PATH);
+        $zip->close();
+
+        //删除临时文件
+        unlink($tmpFile);
+
+        //更新版本号
+        $configFile = BASE_PATH . '/config/app.php';
+        $configContent = (string)file_get_contents($configFile);
+        $configContent = str_replace("'version' => '" . config("app")['version'] . "'", "'version' => '$version'", $configContent);
+        file_put_contents($configFile, $configContent);
+
+        //更新锁文件
+        file_put_contents(BASE_PATH . '/kernel/Install/Lock', date("Y-m-d H:i:s"));
+
+        //清空缓存
+        Opcache::clear();
+
+        return $this->json(200, '更新成功');
     }
 }
