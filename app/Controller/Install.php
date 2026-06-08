@@ -28,6 +28,40 @@ class Install extends User
     }
 
     /**
+     * 环境检测API
+     * @return array
+     */
+    public function checkEnv(): array
+    {
+        $phpVersion = phpversion();
+        $phpParts = explode('.', $phpVersion);
+        $phpOk = (int)$phpParts[0] >= 8;
+        
+        $exts = [
+            'gd' => extension_loaded('gd'),
+            'curl' => extension_loaded('curl'),
+            'pdo_mysql' => extension_loaded('pdo_mysql'),
+            'json' => extension_loaded('json'),
+            'zip' => extension_loaded('zip')
+        ];
+        
+        $canInstall = $phpOk;
+        foreach ($exts as $ext) {
+            if (!$ext) {
+                $canInstall = false;
+                break;
+            }
+        }
+        
+        return $this->json(200, 'ok', [
+            'php_version' => $phpVersion,
+            'php_ok' => $phpOk,
+            'exts' => $exts,
+            'can_install' => $canInstall
+        ]);
+    }
+
+    /**
      * 安装入口 - 重定向到 step
      * @return void
      */
