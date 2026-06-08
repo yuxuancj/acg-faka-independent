@@ -638,11 +638,11 @@ CREATE TABLE IF NOT EXISTS `__PREFIX__user_checkin` (
 
 -- 给user表添加成长值和积分字段
 ALTER TABLE `__PREFIX__user` 
-ADD COLUMN IF NOT EXISTS `growth_points` int(11) NOT NULL DEFAULT '0' COMMENT '成长值' AFTER `balance`,
-ADD COLUMN IF NOT EXISTS `points` int(11) NOT NULL DEFAULT '0' COMMENT '积分' AFTER `growth_points`,
-ADD COLUMN IF NOT EXISTS `level_id` int(11) DEFAULT '1' COMMENT '等级ID' AFTER `points`,
-ADD COLUMN IF NOT EXISTS `is_new_admin` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否首次登录后台' AFTER `level_id`,
-ADD KEY IF NOT EXISTS `idx_level_id` (`level_id`);
+ADD COLUMN `growth_points` int(11) NOT NULL DEFAULT '0' COMMENT '成长值' AFTER `balance`,
+ADD COLUMN `points` int(11) NOT NULL DEFAULT '0' COMMENT '积分' AFTER `growth_points`,
+ADD COLUMN `level_id` int(11) DEFAULT '1' COMMENT '等级ID' AFTER `points`,
+ADD COLUMN `is_new_admin` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否首次登录后台' AFTER `level_id`,
+ADD KEY `idx_level_id` (`level_id`);
 
 -- =========================================
 -- 二、促销系统表
@@ -900,11 +900,11 @@ INSERT INTO `__PREFIX__config_extra` (`group`, `key`, `value`, `type`, `descript
 
 -- 给商品表添加字段
 ALTER TABLE `__PREFIX__commodity` 
-ADD COLUMN IF NOT EXISTS `is_hidden` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否隐藏' AFTER `stock`,
-ADD COLUMN IF NOT EXISTS `level_prices` text COMMENT '等级价格JSON' AFTER `is_hidden`,
-ADD COLUMN IF NOT EXISTS `has_wholesale` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否有批发折扣' AFTER `level_prices`,
-ADD COLUMN IF NOT EXISTS `source_api_config` text COMMENT '货源API配置JSON' AFTER `has_wholesale`,
-ADD COLUMN IF NOT EXISTS `expire_days` int(11) DEFAULT NULL COMMENT '卡密有效期天数' AFTER `source_api_config`;
+ADD COLUMN `is_hidden` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否隐藏' AFTER `stock`,
+ADD COLUMN `level_prices` text COMMENT '等级价格JSON' AFTER `is_hidden`,
+ADD COLUMN `has_wholesale` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否有批发折扣' AFTER `level_prices`,
+ADD COLUMN `source_api_config` text COMMENT '货源API配置JSON' AFTER `has_wholesale`,
+ADD COLUMN `expire_days` int(11) DEFAULT NULL COMMENT '卡密有效期天数' AFTER `source_api_config`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
