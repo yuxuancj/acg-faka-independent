@@ -49,8 +49,12 @@ try {
 
     $s = explode("/", trim((string)$routePath, '/'));
     Context::set(Base::ROUTE, "/" . implode("/", $s));
-    Context::set(Base::LOCK, (string)file_get_contents(BASE_PATH . "/kernel/Install/Lock"));
-    Context::set(Base::IS_INSTALL, file_exists(BASE_PATH . '/kernel/Install/Lock'));
+    
+    // 修复：先检查Lock文件是否存在，避免首次安装时出错
+    $lockPath = BASE_PATH . "/kernel/Install/Lock";
+    Context::set(Base::IS_INSTALL, file_exists($lockPath));
+    Context::set(Base::LOCK, file_exists($lockPath) ? (string)file_get_contents($lockPath) : "");
+    
     Context::set(Base::OPCACHE, extension_loaded("Zend OPcache") || extension_loaded("opcache"));
     Context::set(Base::STORE_STATUS, file_exists(BASE_PATH . "/kernel/Plugin.php"));
 
@@ -80,16 +84,19 @@ try {
     //存储
     $_GET["_PARAMETER"] = Firewall::inst()->xssKiller($parameter);
 
-    //初始化数据库
-    $capsule = new Manager();
-    $db_config = config('database');
-    $db_config['options'][PDO::ATTR_PERSISTENT] = true;
-    // 创建链接
-    $capsule->addConnection($db_config);
-    // 设置全局静态可访问
-    $capsule->setAsGlobal();
-    // 启动Eloquent
-    $capsule->bootEloquent();
+    // 如果是安装页面，跳过数据库初始化
+    if (!Context::get(Base::IS_INSTALL) && strtolower($s[0]) !== 'install') {
+        //初始化数据库
+        $capsule = new Manager();
+        $db_config = config('database');
+        $db_config['options'][PDO::ATTR_PERSISTENT] = true;
+        // 创建链接
+        $capsule->addConnection($db_config);
+        // 设置全局静态可访问
+        $capsule->setAsGlobal();
+        // 启动Eloquent
+        $capsule->bootEloquent();
+    }
 
     //插件库
     if (Context::get(Base::STORE_STATUS) && Context::get(Base::IS_INSTALL)) {
