@@ -47,6 +47,21 @@ class Install extends User
         if (file_exists(BASE_PATH . '/kernel/Install/Lock')) {
             Client::redirect("/", "どうして?", 3);
         }
+        
+        // 确保runtime目录存在
+        $dirs = [
+            BASE_PATH . '/runtime',
+            BASE_PATH . '/runtime/view',
+            BASE_PATH . '/runtime/view/cache',
+            BASE_PATH . '/runtime/view/compile',
+            BASE_PATH . '/runtime/plugin'
+        ];
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+        }
+        
         $data = [];
         $data['version'] = config("app")['version'];
         $data['php_version'] = phpversion();
